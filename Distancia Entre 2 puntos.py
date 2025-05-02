@@ -16,48 +16,43 @@ def distancia_maximo(x, y):
     return np.max(np.abs(x - y))
 
 # Solicitar al usuario el tipo de distancia
-distancia = input("¿Qué distancia quieres calcular? (t/e/m): ")
+distancia = input("¿Qué distancia quieres calcular? (t: taxi / e: euclidiana / m: máxima): ").strip().lower()
 
-# Solicitar al usuario la unidad de medida
-medida = input("¿Qué unidad de medida quieres usar? (k/a/m): ")
+# Solicitar la unidad de medida
+medida = input("¿Qué unidad de medida quieres usar? (k: kilómetros / a: millas / m: metros): ").strip().lower()
 
-# Validar la entrada y calcular la distancia
-if distancia in ["t", "e", "m"]:
-    # Solicitar las coordenadas de los dos puntos
-    x1 = float(input("Introduce la coordenada x del primer punto: "))
-    y1 = float(input("Introduce la coordenada y del primer punto: "))
-    x2 = float(input("Introduce la coordenada x del segundo punto: "))
-    y2 = float(input("Introduce la coordenada y del segundo punto: "))
-    
-    # Crear los puntos como listas
-    punto1 = [x1, y1]
-    punto2 = [x2, y2]
-    
-    if medida == "a":
-        # Convertir a millas
-        punto1 = [x * 0.621371 for x in punto1]
-        punto2 = [x * 0.621371 for x in punto2]
-    elif medida == "m":
-        # Convertir a metros
-        punto1 = [x * 1000 for x in punto1]
-        punto2 = [x * 1000 for x in punto2]
-    
-    # Calcular la distancia según la opción seleccionada
-    if distancia == "t":
-        resultado = distancia_taxi(punto1, punto2)
-        tipo_distancia = "distancia de taxi"
-    elif distancia == "e":
-        resultado = distancia_euclidea(punto1, punto2)
-        tipo_distancia = "distancia euclidiana"
-    elif distancia == "m":
-        resultado = distancia_maximo(punto1, punto2)
-        tipo_distancia = "distancia máxima"
-    
-    # Mostrar el resultado
-    if medida in ["k", "a", "m"]:
+# Validar entradas
+if distancia in ["t", "e", "m"] and medida in ["k", "a", "m"]:
+    try:
+        # Solicitar coordenadas
+        x1 = float(input("Introduce la coordenada x del primer punto: "))
+        y1 = float(input("Introduce la coordenada y del primer punto: "))
+        x2 = float(input("Introduce la coordenada x del segundo punto: "))
+        y2 = float(input("Introduce la coordenada y del segundo punto: "))
+        
+        punto1 = [x1, y1]
+        punto2 = [x2, y2]
+
+        # Calcular distancia
+        if distancia == "t":
+            resultado = distancia_taxi(punto1, punto2)
+            tipo_distancia = "distancia de taxi"
+        elif distancia == "e":
+            resultado = distancia_euclidea(punto1, punto2)
+            tipo_distancia = "distancia euclidiana"
+        else:
+            resultado = distancia_maximo(punto1, punto2)
+            tipo_distancia = "distancia máxima"
+
+        # Convertir resultado a unidad
+        if medida == "a":
+            resultado *= 0.621371  # kilómetros a millas
+        elif medida == "m":
+            resultado *= 1000      # kilómetros a metros
+
         unidad = {"k": "Kilómetros", "a": "Millas", "m": "Metros"}[medida]
         print(f"La {tipo_distancia} entre los puntos es: {resultado:.2f} {unidad}")
-    else:
-        print("Unidad de medida no válida.")
+    except ValueError:
+        print("Error: debes introducir valores numéricos válidos para las coordenadas.")
 else:
-    print("Opción de distancia no válida.")
+    print("Error: opción de distancia o unidad de medida no válida.")
